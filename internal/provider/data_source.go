@@ -56,10 +56,11 @@ func dataSource() *schema.Resource {
 func dataSourceRead(ctx context.Context, d *schema.ResourceData, meta interface{}) (diags diag.Diagnostics) {
 	url := d.Get("url").(string)
 	headers := d.Get("request_headers").(map[string]interface{})
+	request_type := d.Get("request_type").(string)
 
 	client := &http.Client{}
 
-	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	req, err := http.NewRequestWithContext(ctx, request_type, url, nil)
 	if err != nil {
 		return append(diags, diag.Errorf("Error creating request: %s", err)...)
 	}
@@ -80,7 +81,7 @@ func dataSourceRead(ctx context.Context, d *schema.ResourceData, meta interface{
 	}
 
 	contentType := resp.Header.Get("Content-Type")
-	if contentType == "" || isContentTypeText(contentType) == false {
+	if contentType == "" || !isContentTypeText(contentType) {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Warning,
 			Summary:  fmt.Sprintf("Content-Type is not recognized as a text type, got %q", contentType),

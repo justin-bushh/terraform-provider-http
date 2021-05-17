@@ -39,6 +39,8 @@ The following arguments are supported:
 * `url` - (Required) The URL to request data from. This URL must respond with
   a `200 OK` response and a `text/*` or `application/json` Content-Type.
 
+* `request_type` - (Required) The request type. Currently supports `GET` and `POST`.
+
 * `request_headers` - (Optional) A map of strings representing additional HTTP
   headers to include in the request.
 
