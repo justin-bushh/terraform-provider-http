@@ -44,6 +44,8 @@ The following arguments are supported:
 * `request_headers` - (Optional) A map of strings representing additional HTTP
   headers to include in the request.
 
+* `request_body` - (Optional) JSON request body for HTTP request.
+
 ## Attributes Reference
 
 The following attributes are exported:

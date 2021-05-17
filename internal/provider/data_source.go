@@ -1,7 +1,9 @@
 package provider
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"mime"
@@ -55,12 +57,19 @@ func dataSource() *schema.Resource {
 
 func dataSourceRead(ctx context.Context, d *schema.ResourceData, meta interface{}) (diags diag.Diagnostics) {
 	url := d.Get("url").(string)
-	headers := d.Get("request_headers").(map[string]interface{})
 	request_type := d.Get("request_type").(string)
+	headers := d.Get("request_headers").(map[string]interface{})
+	body := d.Get("request_body").(map[string]interface{})
+
+	postBody, err := json.Marshal(body)
+	if err != nil {
+		return append(diags, diag.Errorf("Error reading json body : %s", err)...)
+	}
+	postBuf := bytes.NewBuffer(postBody)
 
 	client := &http.Client{}
 
-	req, err := http.NewRequestWithContext(ctx, request_type, url, nil)
+	req, err := http.NewRequestWithContext(ctx, request_type, url, postBuf)
 	if err != nil {
 		return append(diags, diag.Errorf("Error creating request: %s", err)...)
 	}
